@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "streamlit_client"
+version = "0.1.0"
+description = "Python client for REST API"
+authors = ["Erdeni Tsyrendashiev <erdenirf@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+streamlit = "^1.40.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

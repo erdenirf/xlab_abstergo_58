@@ -1,0 +1,13 @@
+FROM python:3.12.5-bullseye
+
+WORKDIR /streamlit_client
+
+COPY requirements.txt /streamlit_client
+
+RUN pip3 install -r requirements.txt
+
+COPY . /streamlit_client
+
+EXPOSE 8501
+
+CMD ["python", "-m", "streamlit", "run", "client.py"]

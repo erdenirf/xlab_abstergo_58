@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "xlab-abstergo-hackathon-2024"
+version = "0.1.0"
+description = "XLab AI Hackathon 2024"
+authors = ["Erdeni Tsyrendashiev <erdenirf@gmail.com>"]
+license = "Apache"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.4"
+python-dotenv = "^1.0.1"
+uvicorn = "^0.32.0"
+mkdocs = "^1.6.1"
+mkdocs-material = "^9.5.44"
+mkdocstrings-python = "^1.12.2"
+celery = "^5.4.0"
+redis = "^5.2.0"
+flower = "^2.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,30 @@
+services:
+
+  python-docs:
+    container_name: python-docs
+    build:
+      context: .
+      dockerfile: ./Dockerfile-mkdocs
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - network-bridge
+
+  fastapi-backend:
+    container_name: fastapi-backend 
+    build:
+      context: .
+      dockerfile: ./Dockerfile-fastapi
+    restart: always
+    # env_file:
+    #   - .env
+    ports:
+      - "8080:8080"
+    networks:
+      - network-bridge
+
+
+networks:
+  network-bridge:
+    driver: bridge

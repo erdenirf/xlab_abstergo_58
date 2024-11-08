@@ -1,0 +1,121 @@
+services:
+
+  python-docs:
+    container_name: python-docs
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile-mkdocs
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - network-bridge
+
+  fastapi-backend:
+    container_name: fastapi-backend 
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile-fastapi
+    restart: always
+    # env_file:
+    #   - ./server/.env
+    ports:
+      - "8080:8080"
+    networks:
+      - network-bridge
+
+  streamlit-client:
+    container_name: streamlit-client
+    build:
+      context: ./streamlit
+      dockerfile: ./Dockerfile-streamlit
+    restart: always
+    # env_file:
+    #   - ./server/.env
+    ports:
+      - "8501:8501"
+    networks:
+      - network-bridge
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - network-bridge
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - /data:/root/redis
+      - /data/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass my-password
+    networks:
+      - network-bridge
+
+  celery-worker:
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile-celery
+    container_name: celery-worker
+    restart: always
+    command: celery -A tasks worker --loglevel=INFO
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/code
+    depends_on:
+      redis:
+        condition:
+          service_healthy
+      rabbitmq:
+        condition:
+          service_healthy
+    working_dir: /code
+    networks:
+      - network-bridge
+
+  flower:
+    image: mher/flower
+    container_name: flower
+    restart: always
+    ports:
+      - "5555:5555"
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/code
+    depends_on:
+      redis:
+        condition:
+          service_healthy
+      rabbitmq:
+        condition:
+          service_healthy
+    working_dir: /code
+    networks:
+      - network-bridge
+
+
+networks:
+  network-bridge:
+    driver: bridge
