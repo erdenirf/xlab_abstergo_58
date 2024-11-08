@@ -1,7 +1,7 @@
 import os
 import argparse
-from data.vocal_extractor import create_vocal_set
-from data.yandex_pipeline import search_playlists
+from vocal_extractor import create_vocal_set
+from yandex_pipeline import search_playlists
 
 
 def main(queries: list, limit: int = 10, use_cuda=False):
