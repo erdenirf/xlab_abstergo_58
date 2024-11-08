@@ -31,7 +31,6 @@ def search_playlists(query: str, fetch_tracks: bool = True, limit: int = 10):
     writer = csv.writer(open("yandex.csv", "a+", newline="", encoding="utf-8"))
 
     count = 0
-
     for result in search_result.results:
         playlist = result.fetch_tracks()
         # create a dir for each playlist
@@ -64,6 +63,7 @@ def search_playlists(query: str, fetch_tracks: bool = True, limit: int = 10):
                 "time": datetime.datetime.now(),
                 "playlist": result.title,
                 "lyrics": lyrics,
+                "path": f"{playlist_dir}/{track.title}.mp3" if fetch_tracks else None
             }
             if fetch_tracks:
                 fetched_track = track_short.fetch_track()
