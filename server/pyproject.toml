@@ -14,9 +14,6 @@ uvicorn = "^0.32.0"
 mkdocs = "^1.6.1"
 mkdocs-material = "^9.5.44"
 mkdocstrings-python = "^1.12.2"
-celery = "^5.4.0"
-redis = "^5.2.0"
-flower = "^2.0.1"
 
 
 [build-system]
