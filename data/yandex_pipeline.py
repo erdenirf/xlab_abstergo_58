@@ -2,11 +2,11 @@ import csv
 import datetime
 import json
 import os
+import re
 
 import requests
 from yandex_music import Client
 from yandex_music.exceptions import NotFoundError
-
 
 with open('auth.json', 'r') as fp:
     TOKEN = json.load(fp)["yandex_token"]
@@ -56,19 +56,22 @@ def search_playlists(query: str, fetch_tracks: bool = True, limit: int = 10):
 
             info = {
                 "id": track.id,
-                "title": track.title,
+                "title": re.sub(r'[^\w\s]', '', track.title),
                 "artists": ', '.join(artist.name for artist in artists),
                 "album": album.title,
                 "album_id": album.id,
                 "time": datetime.datetime.now(),
-                "playlist": result.title,
+                "playlist": re.sub(r'[^\w\s]', '', result.title),
                 "lyrics": lyrics,
                 "path": f"{playlist_dir}/{track.title}.mp3" if fetch_tracks else None
             }
             if fetch_tracks:
                 fetched_track = track_short.fetch_track()
-                fetched_track.download(f"{playlist_dir}/{track.title}.mp3")
-
+                try:
+                    fetched_track.download(f"{playlist_dir}/{track.title}.mp3")
+                except Exception as e:
+                    print(e)
+                    continue
             writer.writerow(list(info.values()))
             results.append(info)
             count += 1
